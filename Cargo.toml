@@ -1,0 +1,13 @@
+[package]
+name = "zokrates-sprout"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = {version="1", features= ["full"]}
+prost = "0.12"
+tonic-reflection = "0.11"	# for dev
+tonic = "0.11.0"
+
+[build-dependencies]
+tonic-build = "0.11"
