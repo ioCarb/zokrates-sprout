@@ -10,6 +10,26 @@ tonic-reflection = "0.11"	# for dev
 tonic = "0.11.0"
 hex = "0.4.3"
 flate2 = "1.0.30"
+lazy_static = "1.5.0"
+
+# zokrates stuff
+zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_core", default-features = false }
+zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_ast", default-features = false }
+zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_field", default-features = false }
+zokrates_interpreter = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_interpreter",default-features = false }
+zokrates_fs_resolver = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", workspace="zokrates_fs_resolver" }
+zokrates_circom = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace="zokrates_circom" }
+zokrates_proof_systems = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_proof", default-features = false }
+zokrates_ark = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_ark", default-features = false }
+zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_common", default-features = false }
+
+
+
+log = "0.4.22"
+rand = "0.8.5"
+serde_json = "1.0.120"
+env_logger = "0.11.3"
+
 
 [build-dependencies]
 tonic-build = "0.11"

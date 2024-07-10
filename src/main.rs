@@ -1,10 +1,20 @@
-use std::io::Read;
+mod compute_witness;
+mod generate_proof;
+mod utils;
 
+use compute_witness::compute_witness_wrapper;
+use generate_proof::compute_proof_wrapper;
+use lazy_static::lazy_static;
+use log::{info, trace};
 use proto::{
     vm_runtime_server::{VmRuntime, VmRuntimeServer},
     ExecuteRequest,
 };
+
+use std::{collections::HashMap, io::Cursor};
+use tokio::sync::Mutex;
 use tonic::transport::Server;
+use utils::convert;
 
 mod proto {
     tonic::include_proto!("vm_runtime");
@@ -17,17 +27,28 @@ mod proto {
 #[derive(Debug, Default)]
 struct ZokratesService {}
 
+// TODO: think about storing tasks decompressed
+// lazy_static! {
+//     static ref CONTENT_MAP: Mutex<HashMap<i32, Vec<u8>>> = Mutex::new(HashMap::new());
+// }
+
+lazy_static! {
+    static ref PROJECT_MAP: Mutex<HashMap<u64, proto::CreateRequest>> = Mutex::new(HashMap::new());
+}
+
 #[tonic::async_trait]
 impl VmRuntime for ZokratesService {
     async fn create(
         &self,
         request: tonic::Request<proto::CreateRequest>,
     ) -> Result<tonic::Response<proto::CreateResponse>, tonic::Status> {
-        println!("received create");
-        match convert_zlib_hex_to_string(&request.into_inner().content) {
-            Ok(s) => println!("{}", s),
-            Err(e) => eprintln!("{}", e),
-        };
+        trace!("received CreateRequest");
+        let request = request.into_inner();
+
+        {
+            let mut map = PROJECT_MAP.lock().await;
+            map.insert(request.project_id, request);
+        }
 
         let response = proto::CreateResponse {};
         Ok(tonic::Response::new(response))
@@ -37,37 +58,79 @@ impl VmRuntime for ZokratesService {
         &self,
         request: tonic::Request<ExecuteRequest>,
     ) -> Result<tonic::Response<proto::ExecuteResponse>, tonic::Status> {
-        println!("received exe");
-        let response = proto::ExecuteResponse {
-            result: "asdf".into(),
+        trace!("received ExecuteRequest");
+        let request = request.into_inner();
+
+        info!("datas: {:?}", request.datas);
+
+        let content;
+        let method;
+        let proving_key;
+        let verify_key;
+
+        {
+            let create_request; // might need to move into lock scope???
+            let map = PROJECT_MAP.lock().await;
+            create_request = match map.get(&request.project_id) {
+                Some(d) => d,
+                None => {
+                    return Err(tonic::Status::not_found(format!(
+                        "couldn't find project_id: {}",
+                        request.project_id
+                    )))
+                }
+            };
+
+            content = convert(&create_request.content, "content").await?;
+            method = create_request.exp_params[0].clone();
+            proving_key = convert(&create_request.exp_params[1], "proving_key").await?;
+            verify_key = convert(&create_request.exp_params[2], "verify_key").await?;
+        }
+
+        let content_cursor = Cursor::new(&content);
+
+        let witness_reader = match compute_witness_wrapper(content_cursor) {
+            Ok(w) => w,
+            Err(e) => {
+                return Err(tonic::Status::invalid_argument(format!(
+                    "couldn't deserialize program content {}",
+                    e
+                )))
+            }
         };
+
+        let content_cursor = Cursor::new(&content);
+
+        let witness = Cursor::new(witness_reader);
+        let proving_key = Cursor::new(proving_key);
+
+        let proof = match compute_proof_wrapper(content_cursor, proving_key, witness, &method) {
+            Ok(p) => p,
+            Err(e) => {
+                return Err(tonic::Status::internal(format!(
+                    "couldnt compute proof {}",
+                    e
+                )))
+            }
+        };
+
+        info!("proof: {}", proof.as_str());
+
+        let response = proto::ExecuteResponse {
+            result: proof.into(),
+        };
+
         Ok(tonic::Response::new(response))
     }
 }
 
-fn convert_zlib_hex_to_string(hex_str: &str) -> Result<String, String> {
-    let bytes = match hex::decode(hex_str) {
-        Ok(bytes) => bytes,
-        Err(e) => return Err(format!("couldn't convert hex string to bytes {}", e)),
-    };
-
-    let mut d = flate2::read::ZlibDecoder::new(bytes.as_slice());
-
-    let mut s = String::new();
-
-    match d.read_to_string(&mut s) {
-        Ok(_) => {}
-        Err(e) => return Err(format!("couldn't decompress string {}", e)),
-    };
-
-    Ok(s)
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "0.0.0.0:4004".parse()?;
+    env_logger::init();
 
-    println!("starting grpc server on {}", addr);
+    let addr = "0.0.0.0:4001".parse()?; // TODO: read port from env
+
+    info!("starting grpc server on {}", addr);
 
     let zok = ZokratesService::default();
 
@@ -78,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Server::builder()
         .add_service(VmRuntimeServer::new(zok))
-        .add_service(reflection) // for dev
+        .add_service(reflection)
         .serve(addr)
         .await?;
 
