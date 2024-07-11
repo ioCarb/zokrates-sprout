@@ -69,7 +69,7 @@ impl VmRuntime for ZokratesService {
         let verify_key;
 
         {
-            let create_request; // might need to move into lock scope???
+            let create_request; // move out of lock scope???
             let map = PROJECT_MAP.lock().await;
             create_request = match map.get(&request.project_id) {
                 Some(d) => d,
@@ -89,7 +89,7 @@ impl VmRuntime for ZokratesService {
 
         let content_cursor = Cursor::new(&content);
 
-        let witness_reader = match compute_witness_wrapper(content_cursor) {
+        let witness_reader = match compute_witness_wrapper(content_cursor, request.datas) {
             Ok(w) => w,
             Err(e) => {
                 return Err(tonic::Status::invalid_argument(format!(

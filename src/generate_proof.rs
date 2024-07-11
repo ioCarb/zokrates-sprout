@@ -1,6 +1,5 @@
 use std::io::{Read, Seek};
 
-use log::info;
 use rand::{rngs::StdRng, SeedableRng};
 use zokrates_ark::Ark;
 use zokrates_ast::ir::{self, ProgEnum, Witness};
