@@ -20,7 +20,7 @@ pub fn compute_witness_wrapper(
     Ok(witness)
 }
 // TODO: should return Witness<T> but doesn't work, bc of missmatichng arms
-pub fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
+fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
     ir_prog: ir::ProgIterator<'a, T, I>,
     inputs: Vec<String>,
 ) -> Result<Vec<u8>, String> {

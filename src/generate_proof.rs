@@ -71,7 +71,7 @@ pub fn compute_proof_wrapper(
     Ok(proof)
 }
 
-pub fn compute_proof<
+fn compute_proof<
     'a,
     T: Field,
     I: Iterator<Item = ir::Statement<'a, T>>,
