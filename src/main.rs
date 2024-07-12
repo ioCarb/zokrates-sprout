@@ -139,8 +139,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .register_encoded_file_descriptor_set(proto::FILE_DESCRIPTOR_SET)
         .build()?;
 
+    let max_message_size = 500 * 1042 * 1042;
+
+    let vm_service = VmRuntimeServer::new(zok)
+        .max_encoding_message_size(max_message_size)
+        .max_decoding_message_size(max_message_size);
+
     Server::builder()
-        .add_service(VmRuntimeServer::new(zok))
+        .add_service(vm_service)
         .add_service(reflection)
         .serve(addr)
         .await?;
