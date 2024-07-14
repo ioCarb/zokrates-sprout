@@ -4,9 +4,9 @@ use log::info;
 use zokrates_ast::ir::{self, ProgEnum};
 use zokrates_field::Field;
 
-pub fn compute_witness_wrapper(
+pub fn compute_witness_wrapper<'a>(
     mut content: impl Read + Seek,
-    inputs: Vec<String>,
+    inputs: impl Iterator<Item = &'a str>,
 ) -> Result<impl AsRef<[u8]>, String> {
     let witness = match ProgEnum::deserialize(&mut content)? {
         ProgEnum::Bn128Program(p) => compute_witness(p, inputs),
@@ -22,15 +22,11 @@ pub fn compute_witness_wrapper(
 // TODO: should return Witness<T> but doesn't work, bc of missmatichng arms
 fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
     ir_prog: ir::ProgIterator<'a, T, I>,
-    inputs: Vec<String>,
+    inputs: impl Iterator<Item = &'a str>,
 ) -> Result<Vec<u8>, String> {
     info!("computing witness");
-
-    // info!("inputs: {}", inputs);
-
+    
     let datas = inputs
-        .iter()
-        .flat_map(|s| s.split(' '))
         .map(|x| T::try_from_dec_str(x))
         .map(|x| x.unwrap())
         .collect::<Vec<T>>();

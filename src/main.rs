@@ -14,7 +14,7 @@ use proto::{
 use std::{collections::HashMap, io::Cursor};
 use tokio::sync::Mutex;
 use tonic::transport::Server;
-use utils::convert;
+use utils::{convert, group_by};
 
 mod proto {
     tonic::include_proto!("vm_runtime");
@@ -27,7 +27,7 @@ mod proto {
 #[derive(Debug, Default)]
 struct ZokratesService {}
 
-// TODO: think about storing tasks decompressed
+// TODO: think about storing tasks decompressed and to a database
 // lazy_static! {
 //     static ref CONTENT_MAP: Mutex<HashMap<i32, Vec<u8>>> = Mutex::new(HashMap::new());
 // }
@@ -66,7 +66,7 @@ impl VmRuntime for ZokratesService {
         let content;
         let method;
         let proving_key;
-        let verify_key;
+        // let verify_key;
 
         {
             let create_request; // move out of lock scope???
@@ -84,12 +84,25 @@ impl VmRuntime for ZokratesService {
             content = convert(&create_request.content, "content").await?;
             method = create_request.exp_params[0].clone();
             proving_key = convert(&create_request.exp_params[1], "proving_key").await?;
-            verify_key = convert(&create_request.exp_params[2], "verify_key").await?;
+            // verify_key = convert(&create_request.exp_params[2], "verify_key").await?;
         }
+
+        info!("received datas: {:?}", &request.datas);
 
         let content_cursor = Cursor::new(&content);
 
-        let witness_reader = match compute_witness_wrapper(content_cursor, request.datas) {
+        // append message wise data1 data2 data3
+        // let datas = request.datas.iter().flat_map(|s| s.split(' '));
+
+        let datas = group_by(request.datas, ',').map_err(|e| {
+            tonic::Status::invalid_argument(format!("some issue with the datas format {}", e))
+        })?;
+
+        info!("formatted datas: {}", &datas);
+
+        let datas = datas.split(' ');
+
+        let witness_reader = match compute_witness_wrapper(content_cursor, datas) {
             Ok(w) => w,
             Err(e) => {
                 return Err(tonic::Status::invalid_argument(format!(
