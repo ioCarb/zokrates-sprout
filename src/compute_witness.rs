@@ -10,11 +10,15 @@ pub fn compute_witness_wrapper<'a>(
 ) -> Result<impl AsRef<[u8]>, String> {
     let witness = match ProgEnum::deserialize(&mut content)? {
         ProgEnum::Bn128Program(p) => compute_witness(p, inputs),
-        ProgEnum::Bls12_377Program(p) => compute_witness(p, inputs),
-        ProgEnum::Bls12_381Program(p) => compute_witness(p, inputs),
-        ProgEnum::Bw6_761Program(p) => compute_witness(p, inputs),
-        ProgEnum::PallasProgram(p) => compute_witness(p, inputs),
-        ProgEnum::VestaProgram(p) => compute_witness(p, inputs),
+        // ProgEnum::Bls12_377Program(p) => compute_witness(p, inputs),
+        // ProgEnum::Bls12_381Program(p) => compute_witness(p, inputs),
+        // ProgEnum::Bw6_761Program(p) => compute_witness(p, inputs),
+        // ProgEnum::PallasProgram(p) => compute_witness(p, inputs),
+        // ProgEnum::VestaProgram(p) => compute_witness(p, inputs),
+        _ => Err(
+            "sorry this curve isnt currently supported. zokrates can only export bn128 to eth"
+                .to_string(),
+        ),
     }?;
 
     Ok(witness)
@@ -25,11 +29,11 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
     inputs: impl Iterator<Item = &'a str>,
 ) -> Result<Vec<u8>, String> {
     info!("computing witness");
-    
-    let datas = inputs
+
+    let datas: Vec<T> = inputs
         .map(|x| T::try_from_dec_str(x))
-        .map(|x| x.unwrap())
-        .collect::<Vec<T>>();
+        .collect::<Result<Vec<T>, _>>()
+        .map_err(|e| format!("couldnt decode inputs:{:?}", e))?;
 
     let interpreter = zokrates_interpreter::Interpreter::default();
 

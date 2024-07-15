@@ -27,7 +27,7 @@ mod proto {
 #[derive(Debug, Default)]
 struct ZokratesService {}
 
-// TODO: think about storing tasks decompressed and to a database
+// TODO: think about storing tasks decompressed or to a database
 // lazy_static! {
 //     static ref CONTENT_MAP: Mutex<HashMap<i32, Vec<u8>>> = Mutex::new(HashMap::new());
 // }
