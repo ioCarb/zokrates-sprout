@@ -7,10 +7,10 @@ edition = "2021"
 tokio = {version="1", features= ["full"]}
 prost = "0.12"
 tonic-reflection = "0.11"	# for dev
-tonic = "0.11.0"
-hex = "0.4.3"
-flate2 = "1.0.30"
-lazy_static = "1.5.0"
+tonic = "0.11"
+hex = "0.4"
+flate2 = "1.0"
+lazy_static = "1.5"
 
 # zokrates stuff
 zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_core", default-features = false }
@@ -24,11 +24,10 @@ zokrates_ark = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", 
 zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_common", default-features = false }
 
 
-
-log = "0.4.22"
-rand = "0.8.5"
-serde_json = "1.0.120"
-env_logger = "0.11.3"
+log = "0.4"
+rand = "0.8"
+serde_json = "1"
+env_logger = "0.11"
 
 
 [build-dependencies]
