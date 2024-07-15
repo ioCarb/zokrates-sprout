@@ -4,6 +4,7 @@
     ~fn main( field[2]A, field B, field[2] C)~ to ~fn main(field[2]A, field B, field[2] C field[2]A1, field B1, field[2] C1)~, but with the comma thing the fn could be ~fn main(field[4]A, field B[2], field[4] C)~. for more information: [[file:src/utils.rs::7][see group_by()]]
 * TODO
 + cleanup unused curves (cleanup code in general)
++ write tests
 + store projects in db or fs instead of memory
 * caveats (huge todos)
 + zokrates cannot export curves other then Bn128 to eth so we also dont compute proofs, as we couldnt use them anyways
