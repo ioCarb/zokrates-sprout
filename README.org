@@ -3,7 +3,7 @@
 + a grpc server will be started which accepts messages defined by vm_instance.proto sent by the w3bstream-prover
 + messages (datas[]) are appended as they are in the by default and passed to zokrates split by spaces
   + if you have comma separated values however the messages are reorderd by the location they have in relation to the comma
-    ~fn main( field[2]A, field B, field[2] C)~ to ~fn main(field[2]A, field B, field[2] C field[2]A1, field B1, field[2] C1)~, but with the comma thing the fn could be ~fn main(field[4]A, field B[2], field[4] C)~. for more information: [[file:src/utils.rs::7][see group_by()]]
+    ~fn main(field[2]A, field B, field[2] C)~ to ~fn main(field[2]A, field B, field[2], C field[2]A1, field B1, field[2] C1)~, but with the comma thing the fn could be ~fn main(field[4]A, field B[2], field[4] C)~. for more information: [[file:src/utils.rs::7][see group_by()]]
 * TODOs
 + abi encode/hexify proof
 + cleanup unused curves (cleanup code in general)

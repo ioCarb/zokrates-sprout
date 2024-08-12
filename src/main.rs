@@ -1,6 +1,6 @@
-mod compute_witness;
-mod generate_proof;
-mod utils;
+pub mod compute_witness;
+pub mod generate_proof;
+pub mod utils;
 
 use compute_witness::compute_witness_wrapper;
 use generate_proof::compute_proof_wrapper;
@@ -10,7 +10,6 @@ use proto::{
     vm_runtime_server::{VmRuntime, VmRuntimeServer},
     ExecuteRequest,
 };
-
 use std::{collections::HashMap, io::Cursor};
 use tokio::sync::Mutex;
 use tonic::transport::Server;
@@ -28,10 +27,6 @@ mod proto {
 struct ZokratesService {}
 
 // TODO: think about storing tasks decompressed or to a database
-// lazy_static! {
-//     static ref CONTENT_MAP: Mutex<HashMap<i32, Vec<u8>>> = Mutex::new(HashMap::new());
-// }
-
 lazy_static! {
     static ref PROJECT_MAP: Mutex<HashMap<u64, proto::CreateRequest>> = Mutex::new(HashMap::new());
 }
@@ -60,8 +55,6 @@ impl VmRuntime for ZokratesService {
     ) -> Result<tonic::Response<proto::ExecuteResponse>, tonic::Status> {
         trace!("received ExecuteRequest");
         let request = request.into_inner();
-
-        info!("datas: {:?}", request.datas);
 
         let content;
         let method;
