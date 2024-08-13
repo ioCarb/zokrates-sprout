@@ -60,9 +60,8 @@ impl VmRuntime for ZokratesService {
         let method;
         let proving_key;
         // let verify_key;
-
+        let create_request; // move out of lock scope???
         {
-            let create_request; // move out of lock scope???
             let map = PROJECT_MAP.lock().await;
             create_request = match map.get(&request.project_id) {
                 Some(d) => d,
@@ -83,9 +82,6 @@ impl VmRuntime for ZokratesService {
         info!("received datas: {:?}", &request.datas);
 
         let content_cursor = Cursor::new(&content);
-
-        // append message wise data1 data2 data3
-        // let datas = request.datas.iter().flat_map(|s| s.split(' '));
 
         let datas = group_by(request.datas, ',').map_err(|e| {
             tonic::Status::invalid_argument(format!("some issue with the datas format {}", e))
