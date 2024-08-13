@@ -1,11 +1,6 @@
-use std::{
-    fs::{self, File},
-    io::{BufReader, Cursor},
-};
-use zokrates_common::helpers::{CurveParameter, SchemeParameter};
-use zokrates_field::Bn128Field;
-use zokrates_proof_systems::{Marlin, G16, GM17};
-use zokrates_sprout::generate_proof::{self, compute_proof_wrapper, format_proof};
+use std::{fs, io::Cursor};
+
+use zokrates_sprout::generate_proof::compute_proof_wrapper;
 
 #[test]
 fn format_test() {
