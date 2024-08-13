@@ -82,7 +82,7 @@ pub fn compute_proof_wrapper(
     witness: impl Read,
     scheme: &str,
 ) -> Result<String, String> {
-    let abi = BufReader::new(File::open("abi.json").unwrap());
+    let abi = BufReader::new(File::open("tests/abi.json").unwrap());
     let abi: JsonAbi = serde_json::from_reader(abi).unwrap();
 
     let program = ProgEnum::deserialize(&mut circuit)?;
