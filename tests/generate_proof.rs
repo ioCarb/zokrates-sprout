@@ -1,6 +1,6 @@
 use std::{fs, io::Cursor};
 
-use zokrates_sprout::generate_proof::compute_proof_wrapper;
+use zokrates::generate_proof::compute_proof_wrapper;
 
 #[test]
 fn format_test() {

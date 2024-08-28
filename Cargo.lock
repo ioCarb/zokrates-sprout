@@ -4241,6 +4241,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "zokrates"
+version = "0.1.0"
+dependencies = [
+ "alloy",
+ "alloy-contract",
+ "alloy-dyn-abi",
+ "alloy-json-abi",
+ "alloy-primitives",
+ "alloy-sol-types",
+ "env_logger",
+ "flate2",
+ "hex",
+ "lazy_static",
+ "log",
+ "prost",
+ "rand",
+ "ruint",
+ "serde_json",
+ "tokio",
+ "tonic",
+ "tonic-build",
+ "tonic-reflection",
+ "zokrates_ark",
+ "zokrates_ast",
+ "zokrates_circom",
+ "zokrates_common",
+ "zokrates_core",
+ "zokrates_field",
+ "zokrates_fs_resolver",
+ "zokrates_interpreter",
+ "zokrates_proof_systems",
+]
+
+[[package]]
 name = "zokrates_abi"
 version = "0.1.9"
 source = "git+https://github.com/Zokrates/ZoKrates#8699128ad0034f2f60d7de60d397ae7986bb23fe"
@@ -4461,38 +4495,4 @@ dependencies = [
  "serde",
  "zokrates_ast",
  "zokrates_field",
-]
-
-[[package]]
-name = "zokrates_sprout"
-version = "0.1.0"
-dependencies = [
- "alloy",
- "alloy-contract",
- "alloy-dyn-abi",
- "alloy-json-abi",
- "alloy-primitives",
- "alloy-sol-types",
- "env_logger",
- "flate2",
- "hex",
- "lazy_static",
- "log",
- "prost",
- "rand",
- "ruint",
- "serde_json",
- "tokio",
- "tonic",
- "tonic-build",
- "tonic-reflection",
- "zokrates_ark",
- "zokrates_ast",
- "zokrates_circom",
- "zokrates_common",
- "zokrates_core",
- "zokrates_field",
- "zokrates_fs_resolver",
- "zokrates_interpreter",
- "zokrates_proof_systems",
 ]
