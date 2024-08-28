@@ -3,6 +3,9 @@ name = "zokrates_sprout"
 version = "0.1.0"
 edition = "2021"
 
+[env]
+PROTOC = "$(which protoc-c)"
+
 [dependencies]
 tokio = {version="1", features= ["full"]}
 prost = "0.12"

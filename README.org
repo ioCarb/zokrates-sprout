@@ -8,10 +8,6 @@ this service is meant to be run as part of a w3bstream-prover and is meant to be
 ** build without docker
 + no external dependencies required except for =cargo=, a c compiler and the protobuf-compiler
 + just run =cargo build=
-+ if the protobuf compiler is not found, run:
-    #+begin_src bash
-      export PROTOC=$(which protoc-c)
-    #+end_src
 + the tests are WIP but you may run =cargo test=
 * TODOs
 + move abi encode (maybe gerelaize and propose pr to alloy-rs core)
