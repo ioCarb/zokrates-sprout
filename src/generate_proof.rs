@@ -31,8 +31,6 @@ fn encode_single(ty: &str, input: &serde_json::Value) -> Result<DynSolValue, Str
 }
 
 fn abi_encode(param: &Param, inputs: &serde_json::Value) -> Result<DynSolValue, String> {
-    // println!("inputs: {:?}", inputs);
-    // println!("param: {:?}", param);
     match param.ty.as_str() {
         "tuple" => {
             match inputs {
@@ -112,7 +110,6 @@ pub fn compute_proof_wrapper(
         },
         _ => unreachable!(),
     }?;
-    println!("proof: {:?}", proof);
 
     let function_name = "verifyTx";
     // FIXME: we should check if func is unique
@@ -133,11 +130,7 @@ pub fn compute_proof_wrapper(
     //     .map(|((_, input), param)| abi_encode(param, input))
     //     .collect::<Result<Vec<_>, _>>()?;
 
-    println!("in: {:?}", inputs1);
-    println!("in: {:?}", inputs2);
-
     let encoded = func
-        // .abi_encode_input(&[inputs1, inputs2])
         .abi_encode_input(&[inputs1, inputs2])
         .map_err(|e| format!("could not abi_encode: {}", e))?;
 
